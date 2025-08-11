@@ -173,7 +173,6 @@ exports.updateProduct = async (req, res) => {
 };
 
 
-
 //delete
 exports.deleteProduct = async (req, res) => {
   try {

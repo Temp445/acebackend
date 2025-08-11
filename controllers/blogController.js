@@ -7,6 +7,8 @@ const path = require('path');
 exports.createBlog = async (req, res) => {
   try {
     let {
+      metatitle,
+      metadescription,
       title,
       author,
       description,
@@ -21,6 +23,8 @@ exports.createBlog = async (req, res) => {
     if (typeof content === 'string') content = JSON.parse(content);
 
     if (
+      !metatitle ||
+      !metadescription ||
       !title?.en ||
       !description?.en ||
       !content?.en ||
@@ -44,6 +48,8 @@ exports.createBlog = async (req, res) => {
   const blogImages = req.files?.map(file => file.filename) || [];
 
     const blog = new Blog({
+      metatitle,
+      metadescription,
       title,
       blogpath,
       author,
@@ -107,86 +113,10 @@ exports.getBlogByTitle = async (req, res) => {
   }
 };
 
-//  Update Blog 
-
-// exports.updateBlog = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { title, author, description, products, category, content } = req.body;
-
-//     const existingBlog = await Blog.findById(id);
-//     if (!existingBlog) {
-//       return res.status(404).json({ error: "Blog not found." });
-//     }
-
-//     const updateData = {};
-
-//     if (title && title !== existingBlog.title) {
-//       const newPath = titleToUrl(title);
-//       const duplicate = await Blog.findOne({ blogpath: newPath, _id: { $ne: id } });
-//       if (duplicate) {
-//         return res.status(400).json({ error: "Another blog with the same title already exists." });
-//       }
-//       updateData.blogpath = newPath;
-//       updateData.title = title;
-//     }
-
-//     if (author) updateData.author = author;
-//     if (description) updateData.description = description;
-//     if (products) updateData.products = products;
-//     if (category) updateData.category = category;
-
-//     if (content) {
-//       try {
-//         updateData.content = typeof content === 'string' ? JSON.parse(content) : content;
-//       } catch {
-//         return res.status(400).json({ error: "Invalid JSON format for 'content'." });
-//       }
-//     }
-
-//     if (req.files && req.files.length > 0) {
-//       const deleteImage = (filename) => {
-//         const filePath = path.join(__dirname, '../uploads', filename);
-//         fs.unlink(filePath, (err) => {
-//           if (err && err.code !== 'ENOENT') {
-//             console.error('Error deleting old image:', filePath, err);
-//           }
-//         });
-//       };
-
-//       if (existingBlog.blogimage) {
-//         if (Array.isArray(existingBlog.blogimage)) {
-//           existingBlog.blogimage.forEach(deleteImage);
-//         } else if (typeof existingBlog.blogimage === 'string') {
-//           deleteImage(existingBlog.blogimage);
-//         }
-//       }
-
-//       const newImages = req.files.map(file => file.filename);
-//       updateData.blogimage = newImages;
-//     }
-
-//     updateData.updatedAt = new Date();
-
-//     const updatedBlog = await Blog.findByIdAndUpdate(id, updateData, {
-//       new: true,
-//       runValidators: true,
-//     });
-
-//     res.status(200).json(updatedBlog);
-//   } catch (error) {
-//     console.error("Blog update error:", error);
-//     if (error.name === 'CastError') {
-//       return res.status(400).json({ error: "Invalid blog ID format." });
-//     }
-//     res.status(400).json({ error: error.message || "Something went wrong while updating the blog." });
-//   }
-// };
-
 exports.updateBlog = async (req, res) => {
   try {
     const { id } = req.params;
-    let { title, author, description, products, category, content } = req.body;
+    let { metatitle,  metadescription, title, author, description, products, category, content } = req.body;
 
     const existingBlog = await Blog.findById(id);
     if (!existingBlog) {
@@ -201,6 +131,8 @@ exports.updateBlog = async (req, res) => {
 
     // Validate required fields
     if (
+      !metatitle ||
+      !metadescription ||
       !title?.en ||
       !description?.en ||
       !content?.en ||
@@ -214,6 +146,8 @@ exports.updateBlog = async (req, res) => {
     }
 
     const updateData = {
+      metatitle,
+      metadescription,
       title,
       author,
       description,

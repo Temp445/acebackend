@@ -33,6 +33,16 @@ const localizedContent = {
 
 const blogSchema = new mongoose.Schema(
   {
+   metatitle: {
+      type: String,
+      required: [true, "Meta title is required"],
+      trim: true,
+    },
+    metadescription: {
+      type: String,
+      required: [true, "Meta description is required"],
+      trim: true,
+    },
     title: {
       type: localizedString,
       required: [true, "Blog title is required"],
